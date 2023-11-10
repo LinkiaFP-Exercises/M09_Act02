@@ -52,14 +52,23 @@ public class Server {
 
 				while ((inputLine = in.readLine()) != null) {
 					System.out.println("Recibido: " + inputLine);
-					processCommand(inputLine);
+
+					if (isValidFormat(inputLine)) {
+						processCommand(inputLine.stripIndent());
 						out.println(QUESTION_CLIENTE);
+					} else {
+						out.println("Formato de entrada incorrecto. Use el formato 'orden - parámetro'.");
+					}
 				}
 
 				clientSocket.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
+
+		private boolean isValidFormat(String input) {
+			return input.matches("(?i)\\b(?:add|remove|list|count|end)\\b - .+");
 		}
 
 		private void processCommand(String command) {
