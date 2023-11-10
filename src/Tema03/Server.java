@@ -31,6 +31,7 @@ public class Server {
 		private Socket clientSocket;
 		private PrintWriter out;
 		private BufferedReader in;
+		private final String QUESTION_CLIENTE = "Que operación deseas realizar (add, count, list, remove, end) :->";
 
 		public ServerThread(Socket socket) {
 			this.clientSocket = socket;
@@ -47,9 +48,12 @@ public class Server {
 			try {
 				String inputLine;
 
+				out.println(QUESTION_CLIENTE);
+
 				while ((inputLine = in.readLine()) != null) {
 					System.out.println("Recibido: " + inputLine);
 					processCommand(inputLine);
+						out.println(QUESTION_CLIENTE);
 				}
 
 				clientSocket.close();
