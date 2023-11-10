@@ -72,7 +72,7 @@ public class Server {
 		}
 
 		private void processCommand(String command) {
-			String[] parts = command.split(" ", 2);
+			String[] parts = command.split(" - ", 2);
 			String operation = parts[0].toLowerCase();
 
 			switch (operation) {
