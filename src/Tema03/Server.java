@@ -15,7 +15,7 @@ public class Server {
 	public static void main(String[] args) {
 		try {
 			serverSocket = new ServerSocket(5678);
-			System.out.println("Servidor esperando conexiones...");
+			System.out.println("¡CONECTADO AL CONTROL DE TAREAS!");
 
 			while (true) {
 				Socket clientSocket = serverSocket.accept();
