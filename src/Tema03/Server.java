@@ -20,8 +20,10 @@ public class Server {
 			inicializeVariables();
 
 			printQuestionClient();
-			while ((clientOutput = brClient.readLine()) != null && isEndInValidFormat(clientOutput)) {
-				if (isComandInValidFormat(clientOutput))
+
+			while (clientInputIsValid()) {
+
+				if (comandIsValid(clientOutput))
 					processCommand(clientOutput);
 				else
 					printInvalidFormatMsg();
@@ -58,11 +60,16 @@ public class Server {
 		enviarAlCliente.println(QUESTION_CLIENT + " " + OPTION_CLIENT);
 	}
 
+	private static boolean clientInputIsValid() throws IOException {
+		clientOutput = brClient.readLine();
+		return clientOutput != null && isEndInValidFormat(clientOutput);
+	}
+
 	private static void printInvalidFormatMsg() {
 		enviarAlCliente.println(INVALID_FORMAT);
 	}
 
-	private static boolean isComandInValidFormat(String input) {
+	private static boolean comandIsValid(String input) {
 		return input.strip().matches(REGEX_COMAND);
 	}
 
