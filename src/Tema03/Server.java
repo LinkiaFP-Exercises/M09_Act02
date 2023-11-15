@@ -17,11 +17,10 @@ public class Server {
 	private static String clientOutput, regexEnd = "\\b(?:end)\\b",
 			regexComandParameter = "\\b(?:(?:add|remove)(?: - .+)?|(?:list|count))\\b",
 			QUESTION_CLIENTE = "Que operación deseas realizar (add, count, list, remove, end):->",
-			inavlidFormatMsg = "Formato de entrada incorrecto. Use el formato 'orden - parámetro'.";
+			invalidFormatMsg = "Formato de entrada incorrecto. Use el formato 'orden - parámetro'.";
 
 	public static void main(String[] args) {
 		try {
-
 			InetSocketAddress addrLocal5678 = new InetSocketAddress("localhost", 5678);
 			serverSocket = new ServerSocket();
 			serverSocket.bind(addrLocal5678);
@@ -32,29 +31,26 @@ public class Server {
 			brClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), "UTF-8"));
 
 			try {
-
 				enviarAlCliente.println(QUESTION_CLIENTE);
-				while ((clientOutput = brClient.readLine()) != null && !clientOutput.equals("end")) {
-
-					if (isEndInValidFormat(clientOutput))
-						break;
-					else if (isComandInValidFormat(clientOutput))
+				while ((clientOutput = brClient.readLine()) != null && isEndInValidFormat(clientOutput)) {
+					if (isComandInValidFormat(clientOutput))
 						processCommand(clientOutput);
 					else
 						printInvalidFormatMsg();
 				}
-
 			} catch (NullPointerException e) {
 				System.out.println("FALLO TRY 02 - MAIN SERVER");
 				e.printStackTrace();
 			}
+
 			clientSocket.close();
+			serverSocket.close();
+
 			System.out.println("¡DESCONECTADO AL CONTROL DE TAREAS!");
 		} catch (IOException e) {
 			System.out.println("FALLO TRY 01 - MAIN SERVER");
 			e.printStackTrace();
 		}
-
 	}
 
 	private static boolean isComandInValidFormat(String input) {
@@ -62,7 +58,7 @@ public class Server {
 	}
 
 	private static boolean isEndInValidFormat(String input) {
-		return input.strip().matches(regexEnd);
+		return !input.strip().matches(regexEnd);
 	}
 
 	private static void processCommand(String command) {
@@ -102,6 +98,6 @@ public class Server {
 	}
 
 	private static void printInvalidFormatMsg() {
-		enviarAlCliente.println(inavlidFormatMsg);
+		enviarAlCliente.println(invalidFormatMsg);
 	}
 }

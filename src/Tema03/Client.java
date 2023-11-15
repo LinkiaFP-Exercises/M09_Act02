@@ -11,7 +11,7 @@ public class Client {
 	private static Socket clientSocket;
 	private static PrintStream enviarAlServidor;
 	private static BufferedReader brClient, brServer;
-	private static String clientImput, serverOutput;
+	private static String clientInput, serverOutput;
 	private static Thread serverResponseThread;
 
 	public static void main(String[] args) {
@@ -25,18 +25,24 @@ public class Client {
 			brServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), "UTF-8"));
 
 			reciveFromServer().start();
-			while ((clientImput = brClient.readLine()) != null && !clientImput.equals("end")) {
-				enviarAlServidor.println(clientImput);
-			}
-			reciveFromServer().interrupt();
+
+			do {
+				clientInput = brClient.readLine();
+				enviarAlServidor.println(clientInput);
+			} while (clientInput != null && !clientInput.equals("end"));
+
+			reciveFromServer().join();
+
 			clientSocket.close();
-		} catch (IOException e) {
-			System.err.println("Error en la comunicación con el servidor: " + e.getMessage());
+
+		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
+		} finally {
+
 		}
 	}
 
-	private static Thread reciveFromServer() throws IOException {
+	private static Thread reciveFromServer() {
 		if (serverResponseThread == null) {
 			serverResponseThread = new Thread(() -> {
 				try {
@@ -50,5 +56,4 @@ public class Client {
 		}
 		return serverResponseThread;
 	}
-
 }
