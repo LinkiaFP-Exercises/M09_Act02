@@ -13,17 +13,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class Server {
-	private static ServerSocket serverSocket;
-	private static InetSocketAddress addrLocal5678;
-	private static Socket clientSocket;
-	private static ArrayList<String> taskList = new ArrayList<>();
-	private static PrintStream enviarAlCliente;
-	private static BufferedReader brClient;
-	private static String clientOutput;
-	private static final String REGEX_END = "\\b(?:end)\\b",
-			REGEX_COMAND = "\\b(?:(?:add|remove)(?: - .+)?|(?:list|count))\\b",
-			QUESTION_CLIENT = "¿Que operación deseas realizar?", OPTION_CLIENT = "(add, count, list, remove, end):-> ",
-			INVALID_FORMAT = "Formato de entrada incorrecto. Use el formato 'orden - parámetro'.";
 
 	public static void main(String[] args) {
 		try {
@@ -128,6 +117,18 @@ public class Server {
 	private static void processCount(String parameter) {
 		enviarAlCliente.println("Número de tareas pendientes: " + taskList.size());
 	}
+
+	private static ServerSocket serverSocket;
+	private static InetSocketAddress addrLocal5678;
+	private static Socket clientSocket;
+	private static ArrayList<String> taskList = new ArrayList<>();
+	private static PrintStream enviarAlCliente;
+	private static BufferedReader brClient;
+	private static String clientOutput;
+	private static final String REGEX_END = "\\b(?:end)\\b",
+			REGEX_COMAND = "\\b(?:(?:add|remove)(?: - .+)?|(?:list|count))\\b",
+			QUESTION_CLIENT = "¿Que operación deseas realizar?", OPTION_CLIENT = "(add, count, list, remove, end):-> ",
+			INVALID_FORMAT = "Formato de entrada incorrecto. Use el formato 'orden - parámetro'.";
 
 	private static final Map<String, Consumer<String>> operationMap = new HashMap<>();
 
