@@ -8,6 +8,9 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
 
 public class Server {
 	private static ServerSocket serverSocket;
@@ -80,36 +83,59 @@ public class Server {
 
 	private static void processCommand(String command) {
 		String[] parts = command.split(" - ", 2);
-		String operation = parts[0].toLowerCase();
+		String operation = parts[0].toLowerCase().strip();
 
-		switch (operation) {
-		case "add":
-			if (parts.length == 2) {
-				taskList.add(parts[1]);
-				enviarAlCliente.println("Tarea añadida con éxito.");
-			} else {
-				printInvalidFormatMsg();
-			}
-			break;
-		case "remove":
-			if (parts.length == 2) {
-				if (taskList.remove(parts[1])) {
-					enviarAlCliente.println("Tarea eliminada con éxito.");
-				} else {
-					enviarAlCliente.println("La tarea no existe.");
-				}
-			} else {
-				printInvalidFormatMsg();
-			}
-			break;
-		case "list":
-			for (int i = 0; i < taskList.size(); i++) {
-				enviarAlCliente.println((i + 1) + ". " + taskList.get(i));
-			}
-			break;
-		case "count":
-			break;
+		// Verificar si la operación existe en el Map
+		if (operationMap.containsKey(operation)) {
+			// Llamar a la función correspondiente
+			operationMap.get(operation).accept(parts.length == 2 ? parts[1].strip() : null);
+		} else {
+			printInvalidFormatMsg();
 		}
+
+		// Volver a imprimir la pregunta al cliente
 		printQuestionClient();
+	}
+
+	// Funciones específicas para cada operación
+	private static void processAdd(String parameter) {
+		if (parameter != null) {
+			taskList.add(parameter);
+			enviarAlCliente.println("Tarea añadida con éxito.");
+		} else {
+			printInvalidFormatMsg();
+		}
+	}
+
+	private static void processRemove(String parameter) {
+		if (parameter != null) {
+			if (taskList.remove(parameter)) {
+				enviarAlCliente.println("Tarea eliminada con éxito.");
+			} else {
+				enviarAlCliente.println("La tarea no existe.");
+			}
+		} else {
+			printInvalidFormatMsg();
+		}
+	}
+
+	private static void processList(String parameter) {
+		for (int i = 0; i < taskList.size(); i++) {
+			enviarAlCliente.println((i + 1) + ". " + taskList.get(i));
+		}
+	}
+
+	private static void processCount(String parameter) {
+		enviarAlCliente.println("Número de tareas pendientes: " + taskList.size());
+	}
+
+	private static final Map<String, Consumer<String>> operationMap = new HashMap<>();
+
+	static {
+		// Inicializar el Map con operaciones y sus funciones correspondientes
+		operationMap.put("add", Server::processAdd);
+		operationMap.put("remove", Server::processRemove);
+		operationMap.put("list", Server::processList);
+		operationMap.put("count", Server::processCount);
 	}
 }
