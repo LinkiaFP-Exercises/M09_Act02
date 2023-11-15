@@ -16,10 +16,7 @@ public class Client {
 
 			serverResponseThread.start();
 
-			do {
-				clientInput = brClient.readLine();
-				enviarAlServidor.println(clientInput);
-			} while (clientInput != null && !clientInput.equals("end"));
+			do {demandComandAndSendToServer();} while (clientInputIsValid());
 
 			serverResponseThread.join();
 
@@ -42,6 +39,15 @@ public class Client {
 		serverResponseThread = new Thread(() -> {
 			brServer.lines().forEachOrdered(System.out::println);
 		});
+	}
+
+	private static void demandComandAndSendToServer() throws IOException {
+		clientInput = brClient.readLine();
+		enviarAlServidor.println(clientInput);
+	}
+
+	private static boolean clientInputIsValid() throws IOException {
+		return clientInput != null && !clientInput.equals("end");
 	}
 
 	private static Socket clientSocket;
