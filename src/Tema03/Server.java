@@ -11,54 +11,71 @@ import java.util.ArrayList;
 
 public class Server {
 	private static ServerSocket serverSocket;
+	private static InetSocketAddress addrLocal5678;
+	private static Socket clientSocket;
 	private static ArrayList<String> taskList = new ArrayList<>();
 	private static PrintStream enviarAlCliente;
 	private static BufferedReader brClient;
-	private static String clientOutput, regexEnd = "\\b(?:end)\\b",
-			regexComandParameter = "\\b(?:(?:add|remove)(?: - .+)?|(?:list|count))\\b",
-			QUESTION_CLIENTE = "Que operación deseas realizar (add, count, list, remove, end):->",
-			invalidFormatMsg = "Formato de entrada incorrecto. Use el formato 'orden - parámetro'.";
+	private static String clientOutput;
+	private static final String REGEX_END = "\\b(?:end)\\b",
+			REGEX_COMAND = "\\b(?:(?:add|remove)(?: - .+)?|(?:list|count))\\b",
+			QUESTION_CLIENT = "¿Que operación deseas realizar?", OPTION_CLIENT = "(add, count, list, remove, end):-> ",
+			INVALID_FORMAT = "Formato de entrada incorrecto. Use el formato 'orden - parámetro'.";
 
 	public static void main(String[] args) {
 		try {
-			InetSocketAddress addrLocal5678 = new InetSocketAddress("localhost", 5678);
-			serverSocket = new ServerSocket();
-			serverSocket.bind(addrLocal5678);
-			System.out.println("¡CONECTADO AL CONTROL DE TAREAS!");
-			Socket clientSocket = serverSocket.accept();
-			System.out.println("Cliente conectado desde " + clientSocket.getInetAddress().getHostAddress());
-			enviarAlCliente = new PrintStream(clientSocket.getOutputStream(), true);
-			brClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), "UTF-8"));
 
-			try {
-				enviarAlCliente.println(QUESTION_CLIENTE);
-				while ((clientOutput = brClient.readLine()) != null && isEndInValidFormat(clientOutput)) {
-					if (isComandInValidFormat(clientOutput))
-						processCommand(clientOutput);
-					else
-						printInvalidFormatMsg();
-				}
-			} catch (NullPointerException e) {
-				System.out.println("FALLO TRY 02 - MAIN SERVER");
-				e.printStackTrace();
+			inicializeVariables();
+
+			printQuestionClient();
+			while ((clientOutput = brClient.readLine()) != null && isEndInValidFormat(clientOutput)) {
+				if (isComandInValidFormat(clientOutput))
+					processCommand(clientOutput);
+				else
+					printInvalidFormatMsg();
 			}
 
-			clientSocket.close();
-			serverSocket.close();
+			closeVariables();
 
-			System.out.println("¡DESCONECTADO AL CONTROL DE TAREAS!");
-		} catch (IOException e) {
-			System.out.println("FALLO TRY 01 - MAIN SERVER");
+		} catch (IOException | NullPointerException e) {
 			e.printStackTrace();
 		}
 	}
 
+	private static void inicializeVariables() throws IOException {
+		addrLocal5678 = new InetSocketAddress("localhost", 5678);
+		serverSocket = new ServerSocket();
+		serverSocket.bind(addrLocal5678);
+		System.out.println("... Servidor a la Espera ...");
+		clientSocket = serverSocket.accept();
+		System.out.println("... Servidor de Tareas Online ...");
+		enviarAlCliente = new PrintStream(clientSocket.getOutputStream(), true);
+		brClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), "UTF-8"));
+		enviarAlCliente.println("¡CONECTADO AL CONTROL DE TAREAS!");
+
+	}
+
+	private static void closeVariables() throws IOException {
+		enviarAlCliente.println("¡DESCONECTADO DEL CONTROL DE TAREAS!");
+		clientSocket.close();
+		serverSocket.close();
+		System.out.println("... Servidor de Tareas Offline ...");
+	}
+
+	private static void printQuestionClient() {
+		enviarAlCliente.println(QUESTION_CLIENT + " " + OPTION_CLIENT);
+	}
+
+	private static void printInvalidFormatMsg() {
+		enviarAlCliente.println(INVALID_FORMAT);
+	}
+
 	private static boolean isComandInValidFormat(String input) {
-		return input.strip().matches(regexComandParameter);
+		return input.strip().matches(REGEX_COMAND);
 	}
 
 	private static boolean isEndInValidFormat(String input) {
-		return !input.strip().matches(regexEnd);
+		return !input.strip().matches(REGEX_END);
 	}
 
 	private static void processCommand(String command) {
@@ -91,13 +108,8 @@ public class Server {
 			}
 			break;
 		case "count":
-			enviarAlCliente.println("Número de tareas pendientes: " + taskList.size());
 			break;
 		}
-		enviarAlCliente.println(QUESTION_CLIENTE);
-	}
-
-	private static void printInvalidFormatMsg() {
-		enviarAlCliente.println(invalidFormatMsg);
+		printQuestionClient();
 	}
 }

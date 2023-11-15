@@ -11,49 +11,42 @@ public class Client {
 	private static Socket clientSocket;
 	private static PrintStream enviarAlServidor;
 	private static BufferedReader brClient, brServer;
-	private static String clientInput, serverOutput;
+	private static String clientInput;
 	private static Thread serverResponseThread;
+	private static InetSocketAddress addrLocal5678;
 
 	public static void main(String[] args) {
-		InetSocketAddress addrLocal5678 = new InetSocketAddress("localhost", 5678);
 
 		try {
-			clientSocket = new Socket();
-			clientSocket.connect(addrLocal5678);
-			enviarAlServidor = new PrintStream(clientSocket.getOutputStream(), true);
-			brClient = new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
-			brServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), "UTF-8"));
+			inicializeVariables();
 
-			reciveFromServer().start();
+			serverResponseThread.start();
 
 			do {
 				clientInput = brClient.readLine();
 				enviarAlServidor.println(clientInput);
 			} while (clientInput != null && !clientInput.equals("end"));
 
-			reciveFromServer().join();
+			serverResponseThread.join();
 
 			clientSocket.close();
 
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
-		} finally {
-
 		}
 	}
 
-	private static Thread reciveFromServer() {
-		if (serverResponseThread == null) {
-			serverResponseThread = new Thread(() -> {
-				try {
-					while ((serverOutput = brServer.readLine()) != null) {
-						System.out.println(serverOutput);
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			});
-		}
-		return serverResponseThread;
+	private static void inicializeVariables() throws IOException {
+		addrLocal5678 = new InetSocketAddress("localhost", 5678);
+		clientSocket = new Socket();
+		clientSocket.connect(addrLocal5678);
+
+		enviarAlServidor = new PrintStream(clientSocket.getOutputStream(), true);
+		brClient = new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
+		brServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), "UTF-8"));
+
+		serverResponseThread = new Thread(() -> {
+			brServer.lines().forEachOrdered(System.out::println);
+		});
 	}
 }
