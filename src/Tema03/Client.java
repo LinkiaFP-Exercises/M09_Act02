@@ -8,12 +8,6 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class Client {
-	private static Socket clientSocket;
-	private static PrintStream enviarAlServidor;
-	private static BufferedReader brClient, brServer;
-	private static String clientInput;
-	private static Thread serverResponseThread;
-	private static InetSocketAddress addrLocal5678;
 
 	public static void main(String[] args) {
 
@@ -49,4 +43,11 @@ public class Client {
 			brServer.lines().forEachOrdered(System.out::println);
 		});
 	}
+
+	private static Socket clientSocket;
+	private static PrintStream enviarAlServidor;
+	private static BufferedReader brClient, brServer;
+	private static String clientInput;
+	private static Thread serverResponseThread;
+	private static InetSocketAddress addrLocal5678;
 }
