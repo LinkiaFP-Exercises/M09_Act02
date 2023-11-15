@@ -49,7 +49,7 @@ public class Server {
 		addrLocal5678 = new InetSocketAddress("localhost", 5678);
 		serverSocket = new ServerSocket();
 		serverSocket.bind(addrLocal5678);
-		System.out.println("... Servidor a la Espera ...");
+		System.out.println("... Servidor de Tareas Waiting ...");
 		clientSocket = serverSocket.accept();
 		System.out.println("... Servidor de Tareas Online ...");
 		enviarAlCliente = new PrintStream(clientSocket.getOutputStream(), true);
