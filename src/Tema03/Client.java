@@ -25,6 +25,7 @@ public class Client {
 			// Inicia un hilo para manejar las respuestas del servidor en segundo plano.
 			serverResponseThread.start();
 
+			// Permite al usuario ingresar comandos hasta que se ingrese "end".
 			do {demandComandAndSendToServer();} while (clientInputIsValid());
 
 			// Espera a que el hilo de respuesta del servidor termine antes de cerrar la
@@ -39,7 +40,6 @@ public class Client {
 		}
 	}
 
-	private static void inicializeVariables() throws IOException {
 	/**
 	 * Inicializa las variables necesarias para la conexión y comunicación con el
 	 * servidor.
@@ -47,6 +47,7 @@ public class Client {
 	 * @throws IOException Si hay un error de entrada/salida durante la
 	 *                     inicialización.
 	 */
+	private static void inicializeVariables() throws IOException {
 		addrLocal5678 = new InetSocketAddress("localhost", 5678);
 		clientSocket = new Socket();
 		clientSocket.connect(addrLocal5678);
@@ -61,17 +62,25 @@ public class Client {
 		});
 	}
 
-	private static void demandComandAndSendToServer() throws IOException {
 	/**
 	 * Solicita al usuario ingresar un comando y lo envía al servidor.
 	 * 
 	 * @throws IOException Si hay un error de entrada/salida durante la lectura del
 	 *                     comando.
 	 */
+	private static void demandComandAndSendToServer() throws IOException {
 		clientInput = brClient.readLine();
 		enviarAlServidor.println(clientInput);
 	}
 
+	/**
+	 * Verifica si la entrada del cliente es válida.
+	 * 
+	 * @return true si la entrada no es nula y no es igual a "end", false de lo
+	 *         contrario.
+	 * @throws IOException Si hay un error de entrada/salida durante la lectura de
+	 *                     la entrada del cliente.
+	 */
 	private static boolean clientInputIsValid() throws IOException {
 		return clientInput != null && !clientInput.equals("end");
 	}
