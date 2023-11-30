@@ -14,4 +14,6 @@ public interface CalculatorModel extends Remote {
 	int calculateSum(int number) throws RemoteException;
 
 	List<Integer> calculateDivisors(int number) throws RemoteException;
+
+	public String listAvailableOperations() throws RemoteException;
 }
