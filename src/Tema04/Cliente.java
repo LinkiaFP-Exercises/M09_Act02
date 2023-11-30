@@ -8,10 +8,9 @@ public class Cliente {
 
 	public static void main(String[] args) {
 		try {
-			// Obtener el registro en el mismo puerto que el servidor
-			Registry registry = LocateRegistry.getRegistry("localhost", 5556);
 
-			// Obtener la instancia del objeto remoto del registro
+			Registry registry = LocateRegistry.getRegistry("localhost", 5678);
+
 			CalculatorModel calculator = (CalculatorModel) registry.lookup("calculator");
 
 			try (Scanner scanner = new Scanner(System.in)) {
@@ -21,15 +20,13 @@ public class Cliente {
 					String operacion = scanner.nextLine().toUpperCase();
 
 					if (operacion.equals("E")) {
-						// Salir del bucle si la operación es "End"
 						break;
 					}
 
 					System.out.print("Escribe la cantidad en decimal: ");
 					int numero = scanner.nextInt();
-					scanner.nextLine(); // Consumir la nueva línea
+					scanner.nextLine();
 
-					// Realizar la operación y mostrar el resultado
 					switch (operacion) {
 					case "B":
 						System.out.println("El número decimal " + numero + " en binario es "
@@ -40,14 +37,28 @@ public class Cliente {
 								"El número " + numero + (calculator.esPrimo(numero) ? " es primo." : " no es primo."));
 						break;
 					case "F":
-						System.out.println("El factorial de " + numero + " es " + calculator.calcularFactorial(numero));
+						try {
+							System.out.println(
+									"El factorial de " + numero + " es " + calculator.calcularFactorial(numero));
+						} catch (Exception e) {
+							System.out.println(ERROR_REMOTO + obtenerMensajeErrorRemoto(e));
+						}
 						break;
 					case "S":
-						System.out.println("La suma de 1 hasta " + numero + " es " + calculator.calcularSuma(numero));
+						try {
+							System.out
+									.println("La suma de 1 hasta " + numero + " es " + calculator.calcularSuma(numero));
+						} catch (Exception e) {
+							System.out.println(ERROR_REMOTO + obtenerMensajeErrorRemoto(e));
+						}
 						break;
 					case "D":
-						System.out
-								.println("Los divisores de " + numero + " son " + calculator.calcularDivisores(numero));
+						try {
+							System.out.println(
+									"Los divisores de " + numero + " son " + calculator.calcularDivisores(numero));
+						} catch (Exception e) {
+							System.out.println(ERROR_REMOTO + obtenerMensajeErrorRemoto(e));
+						}
 						break;
 					default:
 						System.out.println("Operación no válida.");
@@ -62,4 +73,19 @@ public class Cliente {
 			e.printStackTrace();
 		}
 	}
+
+	public static String obtenerMensajeErrorRemoto(Exception e) {
+		String mensaje = e.getMessage();
+		if (mensaje != null && mensaje.contains(CalculatorModel.FACTORIAL_ERROR)) {
+			mensaje = CalculatorModel.FACTORIAL_ERROR;
+		} else if (mensaje != null && mensaje.contains(CalculatorModel.SUMA_ERROR)) {
+			mensaje = CalculatorModel.SUMA_ERROR;
+		} else if (mensaje != null && mensaje.contains(CalculatorModel.DIVISORES_ERROR)) {
+			mensaje = CalculatorModel.DIVISORES_ERROR;
+		}
+		return mensaje;
+	}
+
+	private static final String ERROR_REMOTO = "Error remoto: ";
+
 }

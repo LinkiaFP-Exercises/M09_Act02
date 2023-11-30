@@ -8,60 +8,47 @@ import java.util.stream.IntStream;
 
 public class Calculator extends UnicastRemoteObject implements CalculatorModel {
 
-    public Calculator() throws RemoteException {
-        super();
-    }
+	public Calculator() throws RemoteException {
+		super();
+	}
 
-    @Override
+	@Override
 	public String convertirABinario(int numero) throws RemoteException {
 		return Integer.toBinaryString(numero);
-    }
+	}
 
-    @Override
+	@Override
 	public boolean esPrimo(int numero) throws RemoteException {
 		if (numero <= 1) {
-            return false;
-        }
+			return false;
+		}
 		return IntStream.rangeClosed(2, (int) Math.sqrt(numero)).noneMatch(i -> numero % i == 0);
-    }
+	}
 
-    @Override
+	@Override
 	public int calcularFactorial(int numero) throws RemoteException {
 		if (numero < 0) {
-			throw new RemoteException("El factorial no está definido para números negativos.");
-        }
+			throw new RemoteException(FACTORIAL_ERROR);
+		}
 		return IntStream.rangeClosed(2, numero).reduce(1, (acum, i) -> acum * i);
-    }
+	}
 
-    @Override
+	@Override
 	public int calcularSuma(int numero) throws RemoteException {
 		if (numero < 0) {
-			throw new RemoteException("La suma no está definida para números negativos.");
-        }
-		return IntStream.rangeClosed(1, numero)
-                .sum();
-    }
+			throw new RemoteException(SUMA_ERROR);
+		}
+		return IntStream.rangeClosed(1, numero).sum();
+	}
 
-    @Override
+	@Override
 	public List<Integer> calcularDivisores(int numero) throws RemoteException {
 		if (numero <= 0) {
-			throw new RemoteException("Los divisores no están definidos para números no positivos.");
-        }
-		return IntStream.rangeClosed(1, numero).filter(i -> numero % i == 0)
-                .boxed()
-                .collect(Collectors.toList());
-    }
-
-    @Override
-	public String listarOperacionesDisponibles() throws RemoteException {
-        return "Available operations:\n" +
-                "- convertToBinary(int number)\n" +
-                "- isPrime(int number)\n" +
-                "- calculateFactorial(int number)\n" +
-                "- calculateSum(int number)\n" +
-                "- calculateDivisors(int number)";
-    }
-
+			throw new RemoteException(DIVISORES_ERROR);
+		}
+		return IntStream.rangeClosed(1, numero).filter(i -> numero % i == 0).boxed().collect(Collectors.toList());
+	}
 
 	private static final long serialVersionUID = 2819903284048121137L;
+
 }

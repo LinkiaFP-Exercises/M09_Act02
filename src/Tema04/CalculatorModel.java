@@ -15,5 +15,7 @@ public interface CalculatorModel extends Remote {
 
 	List<Integer> calcularDivisores(int number) throws RemoteException;
 
-	public String listarOperacionesDisponibles() throws RemoteException;
+	final String FACTORIAL_ERROR = "El factorial no está definido para números negativos.";
+	final String SUMA_ERROR = "La suma no está definida para números negativos.";
+	final String DIVISORES_ERROR = "Los divisores no están definidos para números no positivos.";
 }
