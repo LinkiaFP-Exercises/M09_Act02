@@ -53,7 +53,7 @@ public class Calculator extends UnicastRemoteObject implements CalculatorModel {
     }
 
     @Override
-    public String listAvailableOperations() throws RemoteException {
+	public String listarOperacionesDisponibles() throws RemoteException {
         return "Available operations:\n" +
                 "- convertToBinary(int number)\n" +
                 "- isPrime(int number)\n" +
