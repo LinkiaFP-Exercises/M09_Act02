@@ -2,13 +2,13 @@ package Tema04;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Calculator extends UnicastRemoteObject implements CalculatorModel {
 
-	public Calculator() throws RemoteException {
-        // Constructor predeterminado, necesario para lanzar excepciones remotas
+    public Calculator() throws RemoteException {
         super();
     }
 
@@ -22,12 +22,8 @@ public class Calculator extends UnicastRemoteObject implements CalculatorModel {
         if (number <= 1) {
             return false;
         }
-        for (int i = 2; i <= Math.sqrt(number); i++) {
-            if (number % i == 0) {
-                return false;
-            }
-        }
-        return true;
+        return IntStream.rangeClosed(2, (int) Math.sqrt(number))
+                .noneMatch(i -> number % i == 0);
     }
 
     @Override
@@ -35,11 +31,8 @@ public class Calculator extends UnicastRemoteObject implements CalculatorModel {
         if (number < 0) {
             throw new RemoteException("Factorial is not defined for negative numbers.");
         }
-        int result = 1;
-        for (int i = 2; i <= number; i++) {
-            result *= i;
-        }
-        return result;
+        return IntStream.rangeClosed(2, number)
+                .reduce(1, (acc, i) -> acc * i);
     }
 
     @Override
@@ -47,7 +40,8 @@ public class Calculator extends UnicastRemoteObject implements CalculatorModel {
         if (number < 0) {
             throw new RemoteException("Sum is not defined for negative numbers.");
         }
-        return (number * (number + 1)) / 2;
+        return IntStream.rangeClosed(1, number)
+                .sum();
     }
 
     @Override
@@ -55,15 +49,21 @@ public class Calculator extends UnicastRemoteObject implements CalculatorModel {
         if (number <= 0) {
             throw new RemoteException("Divisors are not defined for non-positive numbers.");
         }
-        List<Integer> divisors = new ArrayList<>();
-        for (int i = 1; i <= number; i++) {
-            if (number % i == 0) {
-                divisors.add(i);
-            }
-        }
-        return divisors;
+        return IntStream.rangeClosed(1, number)
+                .filter(i -> number % i == 0)
+                .boxed()
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public String listAvailableOperations() throws RemoteException {
+        return "Available operations:\n" +
+                "- convertToBinary(int number)\n" +
+                "- isPrime(int number)\n" +
+                "- calculateFactorial(int number)\n" +
+                "- calculateSum(int number)\n" +
+                "- calculateDivisors(int number)";
     }
 
 	private static final long serialVersionUID = 2819903284048121137L;
 }
-
