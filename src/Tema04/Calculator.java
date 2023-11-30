@@ -13,44 +13,41 @@ public class Calculator extends UnicastRemoteObject implements CalculatorModel {
     }
 
     @Override
-    public String convertToBinary(int number) throws RemoteException {
-        return Integer.toBinaryString(number);
+	public String convertirABinario(int numero) throws RemoteException {
+		return Integer.toBinaryString(numero);
     }
 
     @Override
-    public boolean isPrime(int number) throws RemoteException {
-        if (number <= 1) {
+	public boolean esPrimo(int numero) throws RemoteException {
+		if (numero <= 1) {
             return false;
         }
-        return IntStream.rangeClosed(2, (int) Math.sqrt(number))
-                .noneMatch(i -> number % i == 0);
+		return IntStream.rangeClosed(2, (int) Math.sqrt(numero)).noneMatch(i -> numero % i == 0);
     }
 
     @Override
-    public int calculateFactorial(int number) throws RemoteException {
-        if (number < 0) {
-            throw new RemoteException("Factorial is not defined for negative numbers.");
+	public int calcularFactorial(int numero) throws RemoteException {
+		if (numero < 0) {
+			throw new RemoteException("El factorial no está definido para números negativos.");
         }
-        return IntStream.rangeClosed(2, number)
-                .reduce(1, (acc, i) -> acc * i);
+		return IntStream.rangeClosed(2, numero).reduce(1, (acum, i) -> acum * i);
     }
 
     @Override
-    public int calculateSum(int number) throws RemoteException {
-        if (number < 0) {
-            throw new RemoteException("Sum is not defined for negative numbers.");
+	public int calcularSuma(int numero) throws RemoteException {
+		if (numero < 0) {
+			throw new RemoteException("La suma no está definida para números negativos.");
         }
-        return IntStream.rangeClosed(1, number)
+		return IntStream.rangeClosed(1, numero)
                 .sum();
     }
 
     @Override
-    public List<Integer> calculateDivisors(int number) throws RemoteException {
-        if (number <= 0) {
-            throw new RemoteException("Divisors are not defined for non-positive numbers.");
+	public List<Integer> calcularDivisores(int numero) throws RemoteException {
+		if (numero <= 0) {
+			throw new RemoteException("Los divisores no están definidos para números no positivos.");
         }
-        return IntStream.rangeClosed(1, number)
-                .filter(i -> number % i == 0)
+		return IntStream.rangeClosed(1, numero).filter(i -> numero % i == 0)
                 .boxed()
                 .collect(Collectors.toList());
     }
@@ -64,6 +61,7 @@ public class Calculator extends UnicastRemoteObject implements CalculatorModel {
                 "- calculateSum(int number)\n" +
                 "- calculateDivisors(int number)";
     }
+
 
 	private static final long serialVersionUID = 2819903284048121137L;
 }

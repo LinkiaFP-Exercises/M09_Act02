@@ -5,15 +5,15 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 public interface CalculatorModel extends Remote {
-	String convertToBinary(int number) throws RemoteException;
+	String convertirABinario(int number) throws RemoteException;
 
-	boolean isPrime(int number) throws RemoteException;
+	boolean esPrimo(int number) throws RemoteException;
 
-	int calculateFactorial(int number) throws RemoteException;
+	int calcularFactorial(int number) throws RemoteException;
 
-	int calculateSum(int number) throws RemoteException;
+	int calcularSuma(int number) throws RemoteException;
 
-	List<Integer> calculateDivisors(int number) throws RemoteException;
+	List<Integer> calcularDivisores(int number) throws RemoteException;
 
-	public String listAvailableOperations() throws RemoteException;
+	public String listarOperacionesDisponibles() throws RemoteException;
 }
