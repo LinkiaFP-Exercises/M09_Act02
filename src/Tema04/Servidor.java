@@ -13,7 +13,7 @@ public class Servidor {
 	public static void main(String[] args) {
 
 		try {
-			Registry registry = LocateRegistry.createRegistry(5678);
+			Registry registry = LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
 
 			Calculator calculator = new Calculator();
 

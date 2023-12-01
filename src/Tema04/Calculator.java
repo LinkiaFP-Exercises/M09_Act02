@@ -28,7 +28,7 @@ public class Calculator extends UnicastRemoteObject implements CalculatorModel {
 	@Override
 	public int calcularFactorial(int numero) throws RemoteException {
 		if (numero < 0) {
-			throw new RemoteException(FACTORIAL_ERROR);
+			throw new RemoteException(ERROR_FACTORIAL);
 		}
 		return IntStream.rangeClosed(2, numero).reduce(1, (acum, i) -> acum * i);
 	}
@@ -36,7 +36,7 @@ public class Calculator extends UnicastRemoteObject implements CalculatorModel {
 	@Override
 	public int calcularSuma(int numero) throws RemoteException {
 		if (numero < 0) {
-			throw new RemoteException(SUMA_ERROR);
+			throw new RemoteException(ERROR_SUMA);
 		}
 		return IntStream.rangeClosed(1, numero).sum();
 	}
@@ -44,7 +44,7 @@ public class Calculator extends UnicastRemoteObject implements CalculatorModel {
 	@Override
 	public List<Integer> calcularDivisores(int numero) throws RemoteException {
 		if (numero <= 0) {
-			throw new RemoteException(DIVISORES_ERROR);
+			throw new RemoteException(ERROR_DIVISORES);
 		}
 		return IntStream.rangeClosed(1, numero).filter(i -> numero % i == 0).boxed().collect(Collectors.toList());
 	}
