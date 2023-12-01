@@ -13,6 +13,10 @@ public class CalculatorManager {
 	private final Logger logger = Logger.getLogger(CalculatorManager.class.getName());
 	private CalculatorModel calculator;
 
+	public CalculatorModel getCalculator() {
+		return this.calculator;
+	}
+
 	public static CalculatorManager getInstance() {
 		return new CalculatorManager();
 	}

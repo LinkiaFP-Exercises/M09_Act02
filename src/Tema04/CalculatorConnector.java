@@ -12,6 +12,10 @@ public class CalculatorConnector {
 	private final Logger logger = Logger.getLogger(CalculatorConnector.class.getName());
 	private Registry registry;
 
+	public Registry getRegistry() {
+		return this.registry;
+	}
+
 	public static CalculatorConnector getInstance() {
 		return new CalculatorConnector();
 	}
