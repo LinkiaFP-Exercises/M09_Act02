@@ -42,7 +42,8 @@ public class CalculatorConnector {
 
 	public void execute() {
 		try {
-			CalculatorManager.getInstance().getCalculator(registry).start();
+			if (registry.list() != null)
+				CalculatorManager.getInstance().getCalculator(registry).start();
 
 		} catch (Exception e) {
 			logger.log(Level.SEVERE, "Error in executeCalculator(): " + e.getMessage(), e);
