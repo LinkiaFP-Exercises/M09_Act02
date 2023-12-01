@@ -42,7 +42,7 @@ public class CalculatorManager {
 				System.out.print(CalculatorModel.PREGUNTA_INICIAL);
 				operacion.set(scanner.nextLine().toUpperCase());
 
-				if (!operacion.get().equals("E")) {
+				if (operacion.get().matches("^[BPFSD]$")) {
 					ErrorManager.ejecutar(() -> 
 						operationHandler.realizarOperacion(operacion.get(), pideDecimal(scanner)));
 				}
